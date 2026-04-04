@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Planning Cards</title>
+
+  <!-- PWA manifest -->
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Theme colour — dark for dark mode, light otherwise -->
+  <meta name="theme-color" content="#171412">
+  <meta name="theme-color" content="#f5f4f0" media="(prefers-color-scheme: light)">
+
+  <!-- iOS / iPadOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Planning Cards">
+
+  <!-- Icons -->
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── View 1: Card selection ───────────────────────────────────────── -->
+  <div id="view-select">
+    <main class="select-main">
+      <div class="card-grid" role="list" aria-label="Estimation cards"></div>
+    </main>
+  </div>
+
+  <!-- ── View 2: Full-screen selected card ───────────────────────────── -->
+  <div id="view-card" aria-live="polite">
+    <header class="card-header">
+      <button class="back-btn" aria-label="Back to card selection">Back</button>
+    </header>
+
+    <article class="card card--full" aria-label="Selected card">
+      <span class="pip pip--tl" id="pip-tl" aria-hidden="true"></span>
+      <span class="card__value" id="card-value"></span>
+      <span class="pip pip--br" id="pip-br" aria-hidden="true"></span>
+    </article>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,302 @@
+/* ============================================================
+   Planning Cards — style.css
+   Phases: 2 (foundation) · 3 (selection view) · 4 (card view) · 6 (animations)
+   ============================================================ */
+
+/* ── Reset ───────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* ── Design tokens — light mode ─────────────────────────── */
+:root {
+  --bg:          #f5f4f0;
+  --surface:     #ffffff;
+  --primary:     #b45309;   /* amber-700 */
+  --primary-lt:  #d97706;   /* amber-600 */
+  --primary-xlt: #fcd34d;   /* amber-300 */
+  --text:        #1c1917;   /* stone-900 */
+  --text-muted:  #78716c;   /* stone-500 */
+  --shadow:      rgba(0, 0, 0, 0.10);
+  --shadow-lg:   rgba(0, 0, 0, 0.18);
+  --radius:      12px;
+  --transition:  200ms ease;
+}
+
+/* ── Design tokens — dark mode ──────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:          #171412;
+    --surface:     #242018;
+    --primary:     #fbbf24;   /* amber-400 */
+    --primary-lt:  #fcd34d;   /* amber-300 */
+    --primary-xlt: #fde68a;   /* amber-200 */
+    --text:        #f5f0e8;
+    --text-muted:  #a8a097;
+    --shadow:      rgba(0, 0, 0, 0.45);
+    --shadow-lg:   rgba(0, 0, 0, 0.62);
+  }
+}
+
+/* ── Base body ───────────────────────────────────────────── */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+               sans-serif;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ── Utility ─────────────────────────────────────────────── */
+.hidden {
+  display: none !important;
+}
+
+/* ============================================================
+   Phase 3 — Card Selection View
+   ============================================================ */
+
+/* ── Selection view wrapper ──────────────────────────────── */
+#view-select {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Main / grid wrapper ─────────────────────────────────── */
+.select-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Card grid ───────────────────────────────────────────── */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.9rem, 3vw, 1.4rem);
+  padding: clamp(1.25rem, 5vw, 2rem);
+  max-width: 360px;
+  width: 100%;
+}
+
+@media (min-width: 540px) {
+  .card-grid {
+    grid-template-columns: repeat(4, 1fr);
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 900px) {
+  .card-grid {
+    max-width: 860px;
+  }
+}
+
+/* ── Card (shared base — used in grid AND full-screen) ───── */
+.card {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--primary-lt);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px var(--shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
+  transition:
+    transform     var(--transition),
+    box-shadow    var(--transition);
+}
+
+/* Grid card — interactive states */
+.card-grid .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 28px var(--shadow-lg);
+}
+
+.card-grid .card:active {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 14px var(--shadow);
+}
+
+.card-grid .card:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ── Card value (big centred number) ─────────────────────── */
+.card__value {
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+
+/* ── Corner pips ─────────────────────────────────────────── */
+.pip {
+  position: absolute;
+  font-size: clamp(0.65rem, 2vw, 0.95rem);
+  font-weight: 700;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.pip--tl {
+  top:  0.4rem;
+  left: 0.5rem;
+}
+
+.pip--br {
+  bottom: 0.4rem;
+  right:  0.5rem;
+  transform: rotate(180deg);
+}
+
+/* ============================================================
+   Phase 4 — Selected Card (Full-screen) View
+   ============================================================ */
+
+/* ── Card view overlay ───────────────────────────────────── */
+#view-card {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+
+  /* Default (hidden) state for animation */
+  opacity: 0;
+  transform: scale(0.94);
+  pointer-events: none;
+}
+
+/* Visible state — applied by JS */
+#view-card.is-visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* ── Card view header ─────────────────────────────────────── */
+.card-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding-top:  env(safe-area-inset-top,  0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  background: var(--surface);
+  border-bottom: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  box-shadow: 0 1px 6px var(--shadow);
+}
+
+/* ── Back button ─────────────────────────────────────────── */
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.75rem 1.1rem;
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--transition), background var(--transition);
+}
+
+.back-btn::before {
+  content: '\2190'; /* ← */
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.back-btn:hover {
+  color: var(--text);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+}
+
+.back-btn:active {
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.back-btn:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: -3px;
+}
+
+/* ── Full-screen card ────────────────────────────────────── */
+.card--full {
+  flex: 1;
+  width: 100%;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  cursor: default;
+  aspect-ratio: unset;
+  /* account for right/bottom safe areas */
+  padding-right:  env(safe-area-inset-right,  0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left:   env(safe-area-inset-left,   0px);
+}
+
+/* Full-screen value — enormous, readable from across the table */
+.card--full .card__value {
+  font-size: clamp(6rem, 30vmin, 18rem);
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* Full-screen pips — scaled up to match */
+.card--full .pip {
+  font-size: clamp(1rem, 5vmin, 2.5rem);
+}
+
+.card--full .pip--tl {
+  top:  1.1rem;
+  left: 1.4rem;
+}
+
+.card--full .pip--br {
+  bottom: 1.1rem;
+  right:  1.4rem;
+}
+
+/* ============================================================
+   Phase 6 — Animations & Transitions
+   ============================================================ */
+
+/* All motion transitions are opt-in */
+@media (prefers-reduced-motion: no-preference) {
+  #view-card {
+    transition:
+      opacity   220ms ease,
+      transform 220ms ease;
+  }
+
+  .card-grid .card {
+    will-change: transform;
+  }
+}
