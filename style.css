@@ -144,7 +144,7 @@ body {
 
 /* ── Card value (big centred number) ─────────────────────── */
 .card__value {
-  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-size: clamp(2.5rem, 10vw, 4.5rem);
   font-weight: 800;
   line-height: 1;
   color: var(--text);
@@ -264,7 +264,7 @@ body {
 
 /* Full-screen value — enormous, readable from across the table */
 .card--full .card__value {
-  font-size: clamp(6rem, 30vmin, 18rem);
+  font-size: clamp(8rem, 40vmin, 24rem);
   font-weight: 800;
   color: var(--primary);
 }
