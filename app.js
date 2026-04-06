@@ -15,6 +15,7 @@ const cardGrid   = document.querySelector('.card-grid');
 const cardValue  = document.getElementById('card-value');
 const pipTl      = document.getElementById('pip-tl');
 const pipBr      = document.getElementById('pip-br');
+const cardFull   = document.querySelector('.card--full');
 const closeBtn   = document.querySelector('.close-btn');
 
 // ── Build card grid ──────────────────────────────────────────
@@ -50,8 +51,11 @@ function showCard(value) {
   document.title        = `Planning Cards — ${value}`;
 
   // Reset any touch gesture transforms
-  viewCard.style.transform = '';
+  cardFull.style.transform = '';
   viewCard.style.opacity = '';
+  
+  // Restore CSS transitions
+  cardFull.style.transition = '';
   viewCard.style.transition = '';
 
   // Cancel any in-progress hide
@@ -127,6 +131,7 @@ viewCard.addEventListener('touchstart', e => {
   startY = e.touches[0].clientY;
   isDragging = true;
   // Disable CSS transition during manual drag
+  cardFull.style.transition = 'none';
   viewCard.style.transition = 'none';
 }, { passive: true });
 
@@ -137,7 +142,7 @@ viewCard.addEventListener('touchmove', e => {
   
   // Only allow dragging downwards
   if (deltaY > 0) {
-    viewCard.style.transform = `translateY(${deltaY}px)`;
+    cardFull.style.transform = `translateY(${deltaY}px)`;
     viewCard.style.opacity = Math.max(0, 1 - (deltaY / window.innerHeight));
   }
 }, { passive: true });
@@ -149,6 +154,7 @@ viewCard.addEventListener('touchend', e => {
   const deltaY = currentY - startY;
   
   // Restore CSS transition so it snaps back or animates out
+  cardFull.style.transition = '';
   viewCard.style.transition = '';
   
   if (deltaY > 120) {
@@ -156,7 +162,7 @@ viewCard.addEventListener('touchend', e => {
     history.back();
   } else {
     // Snap back to 0
-    viewCard.style.transform = '';
+    cardFull.style.transform = '';
     viewCard.style.opacity = '';
   }
 });

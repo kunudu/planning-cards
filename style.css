@@ -200,7 +200,6 @@ body {
 
   /* Default (hidden) state for animation */
   opacity: 0;
-  transform: rotateY(90deg) scale(0.9);
   pointer-events: none;
   cursor: pointer; /* Tap anywhere to dismiss */
   touch-action: none; /* Prevent browser pull-to-refresh so we can handle custom swipe */
@@ -209,7 +208,6 @@ body {
 /* Visible state — applied by JS */
 #view-card.is-visible {
   opacity: 1;
-  transform: rotateY(0deg) scale(1);
   pointer-events: auto;
 }
 
@@ -250,8 +248,8 @@ body {
 
 /* ── Full-screen card ────────────────────────────────────── */
 .card--full {
+  flex: 1;
   width: 100%;
-  height: 100dvh;
   border-radius: 0;
   border: none;
   box-shadow: none;
@@ -262,6 +260,13 @@ body {
   padding-right:  env(safe-area-inset-right,  0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   padding-left:   env(safe-area-inset-left,   0px);
+  
+  /* Initial state for 3D flip animation */
+  transform: rotateY(90deg) scale(0.9);
+}
+
+#view-card.is-visible .card--full {
+  transform: rotateY(0deg) scale(1);
 }
 
 /* Full-screen value — enormous, readable from across the table */
@@ -293,9 +298,11 @@ body {
 /* All motion transitions are opt-in */
 @media (prefers-reduced-motion: no-preference) {
   #view-card {
-    transition:
-      opacity   220ms ease,
-      transform 220ms ease;
+    transition: opacity 220ms ease;
+  }
+  
+  .card--full {
+    transition: transform 220ms ease;
   }
 
   .card-grid .card {
