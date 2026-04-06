@@ -54,7 +54,6 @@ body {
   color: var(--text);
   font-family: 'Outfit', system-ui, -apple-system, sans-serif;
   transition: background var(--transition), color var(--transition);
-  perspective: 1200px;
 }
 
 /* ── Utility ─────────────────────────────────────────────── */
@@ -197,6 +196,7 @@ body {
   display: flex;
   flex-direction: column;
   background: var(--bg);
+  perspective: 1200px;
 
   /* Default (hidden) state for animation */
   opacity: 0;
