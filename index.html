@@ -21,6 +21,11 @@
   <link rel="icon" href="logo.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
 
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,14 +34,13 @@
   <div id="view-select">
     <main class="select-main">
       <div class="card-grid" role="list" aria-label="Estimation cards"></div>
+      <footer class="instruction-footer" aria-hidden="true">Tap a card to select your estimate</footer>
     </main>
   </div>
 
   <!-- ── View 2: Full-screen selected card ───────────────────────────── -->
   <div id="view-card" aria-live="polite">
-    <header class="card-header">
-      <button class="back-btn" aria-label="Back to card selection">Back</button>
-    </header>
+    <button class="close-btn" aria-label="Close card">&times;</button>
 
     <article class="card card--full" aria-label="Selected card">
       <span class="pip pip--tl" id="pip-tl" aria-hidden="true"></span>

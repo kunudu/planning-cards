@@ -15,7 +15,7 @@ const cardGrid   = document.querySelector('.card-grid');
 const cardValue  = document.getElementById('card-value');
 const pipTl      = document.getElementById('pip-tl');
 const pipBr      = document.getElementById('pip-br');
-const backBtn    = document.querySelector('.back-btn');
+const closeBtn   = document.querySelector('.close-btn');
 
 // ── Build card grid ──────────────────────────────────────────
 // Cards are generated in JS to avoid repetition in HTML (task 5.6)
@@ -36,7 +36,7 @@ function buildGrid() {
 }
 
 // ── View transitions ─────────────────────────────────────────
-// #view-card uses opacity + transform for smooth animation.
+// #view-card uses opacity + rotateY + scale for smooth 3D animation.
 // JS controls display via pointer-events + opacity; .hidden only
 // used as a hard cut when going back to avoid any flash.
 
@@ -48,6 +48,11 @@ function showCard(value) {
   pipTl.textContent     = value;
   pipBr.textContent     = value;
   document.title        = `Planning Cards — ${value}`;
+
+  // Reset any touch gesture transforms
+  viewCard.style.transform = '';
+  viewCard.style.opacity = '';
+  viewCard.style.transition = '';
 
   // Cancel any in-progress hide
   clearTimeout(hideTimer);
@@ -106,9 +111,54 @@ cardGrid.addEventListener('click', e => {
   location.hash = 'card=' + encodeURIComponent(value);
 });
 
-// ── Events: back button ──────────────────────────────────────
-backBtn.addEventListener('click', () => {
+// ── Events: tap anywhere to dismiss ──────────────────────────
+viewCard.addEventListener('click', e => {
+  // Clicking anywhere on the full-screen view (or the close btn) goes back
   history.back();
+});
+
+// ── Events: swipe down to dismiss ────────────────────────────
+let startY = 0;
+let currentY = 0;
+let isDragging = false;
+
+viewCard.addEventListener('touchstart', e => {
+  if (e.touches.length > 1) return; // Only track single touch
+  startY = e.touches[0].clientY;
+  isDragging = true;
+  // Disable CSS transition during manual drag
+  viewCard.style.transition = 'none';
+}, { passive: true });
+
+viewCard.addEventListener('touchmove', e => {
+  if (!isDragging) return;
+  currentY = e.touches[0].clientY;
+  const deltaY = currentY - startY;
+  
+  // Only allow dragging downwards
+  if (deltaY > 0) {
+    viewCard.style.transform = `translateY(${deltaY}px)`;
+    viewCard.style.opacity = Math.max(0, 1 - (deltaY / window.innerHeight));
+  }
+}, { passive: true });
+
+viewCard.addEventListener('touchend', e => {
+  if (!isDragging) return;
+  isDragging = false;
+  
+  const deltaY = currentY - startY;
+  
+  // Restore CSS transition so it snaps back or animates out
+  viewCard.style.transition = '';
+  
+  if (deltaY > 120) {
+    // Threshold crossed: dismiss
+    history.back();
+  } else {
+    // Snap back to 0
+    viewCard.style.transform = '';
+    viewCard.style.opacity = '';
+  }
 });
 
 // ── Events: keyboard ─────────────────────────────────────────
